@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quotes Of the Day</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="quote-box">
+    <h2>Quote of the day</h2>
+    <blockquote id="quote">Loading...</blockquote>
+    <span id="author">Loading...</span>
+    <div>
+      <button onclick="getquote()">New Quote</button>
+      <button onclick="tweet()"><img src="twitter.png" alt="">Tweet</button>
+    </div>
+  </div>
+
+  <script>
+    const quote = document.getElementById("quote");
+    const author = document.getElementById("author");
+
+    function getApiUrl() {
+      // Return a fresh URL every time to avoid cached responses
+      return "https://api.allorigins.win/get?disableCache=true&url=" + encodeURIComponent("https://zenquotes.io/api/random");
+    }
+
+    async function getquote() {
+      try {
+        const response = await fetch(getApiUrl());
+        const data = await response.json();
+        const parsed = JSON.parse(data.contents);
+        quote.innerHTML = parsed[0].q;
+        author.innerHTML = parsed[0].a;
+      } catch (error) {
+        quote.innerHTML = "Failed to load quote.";
+        author.innerHTML = "";
+        console.error("Error fetching quote:", error);
+      }
+    }
+
+    getquote(); // Load first quote on page load
+
+    function tweet() {
+      window.open(
+        "https://twitter.com/intent/tweet?text=" +
+        encodeURIComponent(`${quote.innerHTML} — ${author.innerHTML}`),
+        "Tweet Window",
+        "width=600,height=300"
+      );
+    }
+  </script>
+</body>
+</html>
